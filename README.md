@@ -1,15 +1,36 @@
-# oracle-tasks-log-and-kill
-A mechanism for logging and killing tasks on demand without using DBMS_APPLICATION_INFO
+# Oracle tasks-log-and-kill
+
+📝 A mechanism for logging and killing tasks on demand without using DBMS_APPLICATION_INFO.
 
 
+##### USAGE:  
+* at the very beginning of the program body
+    >     programs_log.add#(
+    >       SCHEMA => 'www_server', 
+    >       JOB_NAME => 'JOB_NAME', 
+    >       info=>'job поиск пользователей',
+    >       sid => sys_context( 'USERENV','SID' ),
+    >       aditional_info=>'FIND_USERS'
+    >     );
+    or  
 
-programs_log.add#('www_server', JOB_NAME => find_run.JOB_NAME, info=>'job поиск пользователей',sid => sys_context( 'USERENV','SID' ),aditional_info=>'FIND_USERS');
-programs_log.add#('www_server',program_name=>'FIND_USERS.find', task_id => find.task_id, aditional_info=>'FIND_USERS');
- 
-programs_log.delete#( 'www_server', JOB_NAME => find_run.JOB_NAME );
+    >     programs_log.add#(
+    >       SCHEMA => 'www_server',
+    >       program_name=>'FIND_USERS.find', 
+    >       task_id => find.task_id, 
+    >       aditional_info=>'FIND_USERS'
+    >     );
+* at the end of the program body 
+    >     programs_log.delete#( SCHEMA => 'www_server', JOB_NAME => find_run.JOB_NAME );
 
-
-programs_log.kill#( schema=> 'www_server', aditional_info=>'FIND_USERS', task_id => kill_task.task_id);
-
-4	19	WWW_SERVER	FIND_USERS_JOB	JOB	job поиск 	FIND_USERS			RUN	01.09.2021 14:46:32	
-4	19	WWW_SERVER	FIND_USERS.FIND	PROGRAM		FIND_USERS	960643		RUN	01.09.2021 14:46:33	
+* to kill program / job
+    >     programs_log.kill#( 
+    >       schema=> 'www_server', 
+    >       aditional_info=>'FIND_USERS', 
+    >       task_id => kill_task.task_id
+    >     );
+    or
+    >     programs_log.kill#( 
+    >       schema=> 'www_server', 
+    >       JOB_NAME=>'JOB1'
+    >     );
